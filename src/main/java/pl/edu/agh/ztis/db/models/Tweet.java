@@ -3,6 +3,8 @@ package pl.edu.agh.ztis.db.models;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
+
 @Document(collection = "tweets")
 public class Tweet {
 
@@ -10,13 +12,15 @@ public class Tweet {
     private String id;
 
     private Long tweetId;
+    private Date createdAt;
     private String text;
 
     public Tweet() {
     }
 
-    public Tweet(Long tweetId, String text) {
+    public Tweet(Long tweetId, Date createdAt, String text) {
         this.tweetId = tweetId;
+        this.createdAt = createdAt;
         this.text = text;
     }
 
@@ -36,6 +40,14 @@ public class Tweet {
         this.tweetId = tweetId;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public String getText() {
         return text;
     }
@@ -47,7 +59,8 @@ public class Tweet {
     @Override
     public String toString() {
         return "Tweet{" +
-                "id='" + id + '\'' +
+                "tweetId=" + tweetId +
+                ", createdAt=" + createdAt +
                 ", text='" + text + '\'' +
                 '}';
     }

@@ -2,17 +2,20 @@ package pl.edu.agh.ztis.crawler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import pl.edu.agh.ztis.db.models.Tweet;
 import pl.edu.agh.ztis.db.services.TweetService;
-import pl.edu.agh.ztis.twitter.TweetFinder;
-import twitter4j.Status;
+import pl.edu.agh.ztis.twitter.search.TweetFinder;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 public class Crawler {
+
+    private final String[] candidates = { "HillaryClinton", "SenSanders",
+            "realDonaldTrump", "tedcruz", "JohnKasich", "marcorubio" };
 
     @Autowired
     private TweetFinder tweetFinder;
@@ -24,11 +27,11 @@ public class Crawler {
     }
 
     public void run() {
-        for (int i = 1; i < 10; ++i) {
-            List<Status> tweets = tweetFinder.searchTweetsForUser("realDonaldTrump", i, Optional.empty());
-            tweetService.save(tweets.stream()
-                    .map(status -> new Tweet(status.getId(), status.getText()))
-                    .collect(Collectors.toList()));
+        for (String candidate : candidates) {
+            for (int i = 1; i < 10; ++i) {
+                CompletableFuture<List<Tweet>> tweetsF = tweetFinder.searchTweetsForUserAsync(candidate, i, Optional.empty());
+                tweetsF.thenAccept(tweets -> tweetService.save(tweets));
+            }
         }
     }
 }
