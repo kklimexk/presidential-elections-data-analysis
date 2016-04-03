@@ -3,8 +3,10 @@ package pl.edu.agh.ztis.twitter.search;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import pl.edu.agh.ztis.db.models.Tweet;
+import pl.edu.agh.ztis.twitter.streaming.TweetStreamUtils;
 import twitter4j.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -24,7 +26,19 @@ public class TweetFinder {
         }
         return statuses
                 .stream().map(s ->
-                        new Tweet(s.getId(), s.getCreatedAt(), s.getText())
+                        new Tweet(new Date(),
+                                s.getId(),
+                                s.getCreatedAt(),
+                                s.getText(),
+                                s.getInReplyToStatusId(),
+                                s.getInReplyToUserId(),
+                                s.getSource(),
+                                s.isRetweet(),
+                                s.getGeoLocation(),
+                                s.getRetweetCount(),
+                                s.getFavoriteCount(),
+                                TweetStreamUtils.hashTagEntitiesToStrings(s.getHashtagEntities()),
+                                s.getUser().getId())
                 ).collect(Collectors.toList());
     }
 

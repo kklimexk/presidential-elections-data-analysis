@@ -3,16 +3,22 @@ package pl.edu.agh.ztis.twitter.streaming;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import pl.edu.agh.ztis.db.models.Tweet;
+import pl.edu.agh.ztis.db.models.*;
 import pl.edu.agh.ztis.db.services.TweetService;
 
+import pl.edu.agh.ztis.db.services.UserService;
 import twitter4j.*;
+import twitter4j.User;
+
+import java.util.Date;
 
 @Component
 public class TweetStreamFinder {
 
     @Autowired
     private TweetService tweetService;
+    @Autowired
+    private UserService userService;
 
     public void getTweetStreamForKeywords(String... keywords) {
         TwitterStream twitterStream = new TwitterStreamFactory().getInstance();
@@ -21,7 +27,30 @@ public class TweetStreamFinder {
 
             @Override
             public void onStatus(Status status) {
-                tweetService.save(new Tweet(status.getId(), status.getCreatedAt(), status.getText()));
+                User u = status.getUser();
+                userService.save(new pl.edu.agh.ztis.db.models.User(new Date(),
+                        u.getId(),
+                        u.getCreatedAt(),
+                        u.getName(),
+                        u.getScreenName(),
+                        u.getStatusesCount(),
+                        u.getFollowersCount(),
+                        u.getLang(),
+                        u.getLocation()));
+
+                tweetService.save(new Tweet(new Date(),
+                        status.getId(),
+                        status.getCreatedAt(),
+                        status.getText(),
+                        status.getInReplyToStatusId(),
+                        status.getInReplyToUserId(),
+                        status.getSource(),
+                        status.isRetweet(),
+                        status.getGeoLocation(),
+                        status.getRetweetCount(),
+                        status.getFavoriteCount(),
+                        TweetStreamUtils.hashTagEntitiesToStrings(status.getHashtagEntities()),
+                        u.getId()));
             }
 
             @Override

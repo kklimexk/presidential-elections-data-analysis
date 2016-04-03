@@ -25,6 +25,6 @@ public class StreamApp implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+        SpringApplication.run(StreamApp.class, args);
     }
 }
