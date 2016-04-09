@@ -1,21 +1,29 @@
 package pl.edu.agh.ztis.twitter.search;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 import pl.edu.agh.ztis.db.models.Tweet;
+import pl.edu.agh.ztis.db.services.TweetService;
+import pl.edu.agh.ztis.db.services.UserService;
 import pl.edu.agh.ztis.twitter.streaming.TweetStreamUtils;
 import twitter4j.*;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
+import java.util.concurrent.Future;
 
 @Component
 public class TweetFinder {
 
-    public List<Tweet> searchTweetsForUser(String user, Integer page, Optional<Integer> count) {
+    @Autowired
+    private TweetService tweetService;
+    @Autowired
+    private UserService userService;
+
+    public Void searchTweetsForUser(String user, Integer page, Optional<Integer> count) {
         Twitter twitter = TwitterFactory.getSingleton();
         Paging paging = count.map(c -> new Paging(page, c)).orElse(new Paging(page));
         List<Status> statuses = null;
@@ -24,28 +32,39 @@ public class TweetFinder {
         } catch (TwitterException e) {
             e.printStackTrace();
         }
-        return statuses
-                .stream().map(s ->
-                        new Tweet(new Date(),
-                                s.getId(),
-                                s.getCreatedAt(),
-                                s.getText(),
-                                s.getInReplyToStatusId(),
-                                s.getInReplyToUserId(),
-                                s.getSource(),
-                                s.isRetweet(),
-                                s.getGeoLocation(),
-                                s.getRetweetCount(),
-                                s.getFavoriteCount(),
-                                TweetStreamUtils.hashTagEntitiesToStrings(s.getHashtagEntities()),
-                                s.getUser().getId())
-                ).collect(Collectors.toList());
+        if (statuses != null) {
+            statuses.forEach(status -> {
+                User u = status.getUser();
+                userService.save(new pl.edu.agh.ztis.db.models.User(new Date(),
+                        u.getId(),
+                        u.getCreatedAt(),
+                        u.getName(),
+                        u.getScreenName(),
+                        u.getStatusesCount(),
+                        u.getFollowersCount(),
+                        u.getLang(),
+                        u.getLocation()));
+                tweetService.save(new Tweet(new Date(),
+                        status.getId(),
+                        status.getCreatedAt(),
+                        status.getText(),
+                        status.getInReplyToStatusId(),
+                        status.getInReplyToUserId(),
+                        status.getSource(),
+                        status.isRetweet(),
+                        status.getGeoLocation(),
+                        status.getRetweetCount(),
+                        status.getFavoriteCount(),
+                        TweetStreamUtils.hashTagEntitiesToStrings(status.getHashtagEntities()),
+                        u.getId()));
+            });
+        }
+        return null;
     }
 
     @Async
-    public CompletableFuture<List<Tweet>> searchTweetsForUserAsync(String user, Integer page, Optional<Integer> count) {
-        List<Tweet> tweets = searchTweetsForUser(user, page, count);
-        return CompletableFuture.completedFuture(tweets);
+    public Future<Void> searchTweetsForUserAsync(String user, Integer page, Optional<Integer> count) {
+        searchTweetsForUser(user, page, count);
+        return new AsyncResult<>(null);
     }
-
 }

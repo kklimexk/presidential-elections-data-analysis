@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 import pl.edu.agh.ztis.crawler.Crawler;
+import pl.edu.agh.ztis.crawler.StreamCrawler;
 import pl.edu.agh.ztis.db.MongoDbConfig;
 import pl.edu.agh.ztis.twitter.TwitterConfig;
 
@@ -15,5 +16,9 @@ public class Config {
     @Bean
     public Crawler crawler() {
         return new Crawler();
+    }
+    @Bean
+    public StreamCrawler streamCrawler() {
+        return new StreamCrawler();
     }
 }
