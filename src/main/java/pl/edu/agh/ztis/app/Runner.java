@@ -20,10 +20,7 @@ public class Runner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (args.length == 1 && "stream".equals(args[0])) {
-            streamCrawler.run();
-        } else {
-            crawler.run();
-        }
+        streamCrawler.run();
+        crawler.run();
     }
 }
