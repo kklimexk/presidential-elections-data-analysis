@@ -3,13 +3,8 @@ package pl.edu.agh.ztis.crawler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import pl.edu.agh.ztis.db.services.UserService;
 import pl.edu.agh.ztis.twitter.search.TweetFinder;
-import twitter4j.Status;
-import twitter4j.User;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -22,28 +17,15 @@ public class Crawler {
     @Autowired
     private TweetFinder tweetFinder;
 
-    @Autowired
-    private UserService userService;
-
     public Crawler() {
     }
 
     public void run() {
         for (String candidate : candidates) {
+            CompletableFuture<pl.edu.agh.ztis.db.models.User> userF = tweetFinder.searchAndSaveUserAsync(candidate);
             for (int i = 1; i < 10; ++i) {
-                CompletableFuture<List<Status>> statusesF = tweetFinder.searchAndSaveTweetsForUserAsync(candidate, i, Optional.empty());
-                statusesF.thenAccept(statuses -> statuses.forEach(status -> {
-                    User u = status.getUser();
-                    userService.save(new pl.edu.agh.ztis.db.models.User(new Date(),
-                            u.getId(),
-                            u.getCreatedAt(),
-                            u.getName(),
-                            u.getScreenName(),
-                            u.getStatusesCount(),
-                            u.getFollowersCount(),
-                            u.getLang(),
-                            u.getLocation()));
-                }));
+                final int finalI = i;
+                userF.thenAccept(user -> tweetFinder.searchAndSaveTweetsForUserAsync(candidate, finalI, Optional.empty()));
             }
         }
     }
