@@ -10,13 +10,20 @@ public class StreamCrawler {
     @Autowired
     private TweetStreamFinder tweetStreamFinder;
 
-    private final String KEYWORDS[] = { "Trump", "clinton", "usaelections",
-            "usa elections", "usa election", "election2016", "election", "MakeAmericaGreatAgain" };
+    private final String HASHTAGS[] = {
+            "#Trump", "#Trump2016", "#TrumpTrain", "#realDonaldTrump", "#TeamTrump", "#DonaldTrump", "#MakeAmericaGreatAgain", "#NeverTrump",
+            "#Clinton", "#TeamClinton", "#HillaryClinton", "#ClintonNotQualified",
+            "#usaelections", "#USAelections", "#usaelections2016",
+            "#Sanders", "#Bernie2016", "#Bernie", "#BernieSanders",
+            "#TEDCRUZ2016", "#cruzcrew", "#TedCruz2016",
+            "#JohnKasich", "#TeamKasich",
+            "#MarcoRubio", "#TeamRubio", "#AlwaysRubio", "#OnlyMarco"
+    };
 
     public StreamCrawler() {
     }
 
     public void run() {
-        tweetStreamFinder.getTweetStreamForKeywords(KEYWORDS);
+        tweetStreamFinder.getTweetStreamForKeywords(HASHTAGS);
     }
 }
