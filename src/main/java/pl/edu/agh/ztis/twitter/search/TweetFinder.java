@@ -95,7 +95,7 @@ public class TweetFinder {
             long cursor = -1;
             PagableResponseList<User> pagableFollowers;
             do {
-                pagableFollowers = twitter.getFollowersList(twitter.getId(), cursor);
+                pagableFollowers = twitter.getFollowersList(user.getUserId(), cursor);
                 List<Long> followersIDs = pagableFollowers.stream().map(User::getId).collect(Collectors.toList());
                 user.setFollowersIds(followersIDs);
                 userService.save(user);

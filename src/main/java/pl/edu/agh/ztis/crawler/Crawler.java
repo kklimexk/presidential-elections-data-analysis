@@ -23,12 +23,10 @@ public class Crawler {
     public void run() {
         for (String candidate : candidates) {
             CompletableFuture<pl.edu.agh.ztis.db.models.User> userF = tweetFinder.searchAndSaveUserAsync(candidate);
+            //userF.thenAccept(u -> tweetFinder.searchAndSaveFollowersForUser(u));
             for (int i = 1; i < 10; ++i) {
                 final int finalI = i;
-                userF.thenAccept(user -> {
-                    //tweetFinder.searchAndSaveFollowersForUser(user);
-                    tweetFinder.searchAndSaveTweetsForUserAsync(candidate, finalI, Optional.empty());
-                });
+                userF.thenAccept(user -> tweetFinder.searchAndSaveTweetsForUserAsync(candidate, finalI, Optional.empty()));
             }
         }
     }
