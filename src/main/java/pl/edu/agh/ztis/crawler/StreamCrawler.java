@@ -20,10 +20,15 @@ public class StreamCrawler {
             "#MarcoRubio", "#TeamRubio", "#AlwaysRubio", "#OnlyMarco"
     };
 
+    private final long[] USERS_TO_FOLLOW = {
+            25073877, 23022687, 18020081, 1339835893, 29442313, 15745368
+    };
+
     public StreamCrawler() {
     }
 
     public void run() {
-        tweetStreamFinder.getTweetStreamForKeywords(HASHTAGS);
+        tweetStreamFinder.runTweetStreamForKeywords(HASHTAGS);
+        tweetStreamFinder.runTweetStreamForUserToFollow(USERS_TO_FOLLOW);
     }
 }

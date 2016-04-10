@@ -21,9 +21,7 @@ public class TweetStreamFinder {
     @Autowired
     private UserService userService;
 
-    public void getTweetStreamForKeywords(String... keywords) {
-        TwitterStream twitterStream = new TwitterStreamFactory().getInstance();
-
+    private StatusListener createListener() {
         StatusListener statusListener = new StatusListener() {
 
             @Override
@@ -80,10 +78,29 @@ public class TweetStreamFinder {
                 //System.out.println("Not supported yet!");
             }
         };
+        return statusListener;
+    }
+
+    public void runTweetStreamForKeywords(String... keywords) {
+        TwitterStream twitterStream = new TwitterStreamFactory().getInstance();
+
+        StatusListener statusListener = createListener();
 
         FilterQuery fq = new FilterQuery();
 
         fq.track(keywords);
+
+        twitterStream.addListener(statusListener);
+        twitterStream.filter(fq);
+    }
+    public void runTweetStreamForUserToFollow(long[] usersToFollow) {
+        TwitterStream twitterStream = new TwitterStreamFactory().getInstance();
+
+        StatusListener statusListener = createListener();
+
+        FilterQuery fq = new FilterQuery();
+
+        fq.follow(usersToFollow);
 
         twitterStream.addListener(statusListener);
         twitterStream.filter(fq);
