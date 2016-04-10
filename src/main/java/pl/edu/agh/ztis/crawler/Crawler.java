@@ -12,7 +12,10 @@ import java.util.concurrent.CompletableFuture;
 public class Crawler {
 
     private final String[] candidates = {"HillaryClinton", "SenSanders",
-            "realDonaldTrump", "tedcruz", "JohnKasich", "marcorubio"};
+            "realDonaldTrump", "tedcruz", "JohnKasich", "marcorubio", "RealBenCarson",
+            "RandPaul", "RickSantorum", "GovernorPerry", "GovMikeHuckabee", "BernieSanders", "VoteRocky2016",
+            "Paul_For_WV", "DrWillieWilson", "ElectWillie"
+    };
 
     @Autowired
     private TweetFinder tweetFinder;
