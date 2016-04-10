@@ -2,7 +2,6 @@ package pl.edu.agh.ztis.twitter.search;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 import pl.edu.agh.ztis.db.models.*;
 import pl.edu.agh.ztis.db.services.TweetService;
@@ -11,11 +10,12 @@ import pl.edu.agh.ztis.twitter.streaming.TweetStreamUtils;
 import twitter4j.*;
 import twitter4j.User;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 @Component
 public class TweetFinder {
@@ -38,7 +38,8 @@ public class TweetFinder {
                     u.getStatusesCount(),
                     u.getFollowersCount(),
                     u.getLang(),
-                    u.getLocation());
+                    u.getLocation(),
+                    new ArrayList<>());
             userService.save(user);
         } catch (TwitterException e) {
             e.printStackTrace();
@@ -88,4 +89,19 @@ public class TweetFinder {
         return CompletableFuture.completedFuture(tweets);
     }
 
+    public void searchAndSaveFollowersForUser(pl.edu.agh.ztis.db.models.User user) {
+        Twitter twitter = TwitterFactory.getSingleton();
+        try {
+            long cursor = -1;
+            PagableResponseList<User> pagableFollowers;
+            do {
+                pagableFollowers = twitter.getFollowersList(twitter.getId(), cursor);
+                List<Long> followersIDs = pagableFollowers.stream().map(User::getId).collect(Collectors.toList());
+                user.setFollowersIds(followersIDs);
+                userService.save(user);
+            } while ((cursor = pagableFollowers.getNextCursor()) != 0);
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        }
+    }
 }

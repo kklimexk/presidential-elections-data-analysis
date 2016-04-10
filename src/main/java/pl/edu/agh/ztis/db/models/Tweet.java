@@ -10,10 +10,8 @@ import java.util.List;
 @Document(collection = "tweets")
 public class Tweet {
 
-    @Id
-    private String id;
     private Date crawledDate;
-
+    @Id
     private Long tweetId;
     private Date createdAt;
     private String text;
@@ -44,14 +42,6 @@ public class Tweet {
         this.favouriteCount = favouriteCount;
         this.hashtags = hashtags;
         this.userId = userId;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public Date getCrawledDate() {
@@ -161,7 +151,6 @@ public class Tweet {
     @Override
     public String toString() {
         return "Tweet{" +
-                "id='" + id + '\'' +
                 ", crawledDate=" + crawledDate +
                 ", tweetId=" + tweetId +
                 ", createdAt=" + createdAt +

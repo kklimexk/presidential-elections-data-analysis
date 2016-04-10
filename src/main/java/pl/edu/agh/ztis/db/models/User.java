@@ -4,14 +4,13 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 
 @Document(collection = "users")
 public class User {
 
-    @Id
-    private String id;
     private Date crawledDate;
-
+    @Id
     private Long userId;
     private Date createdAt;
     private String name;
@@ -20,11 +19,12 @@ public class User {
     private Integer numOfFollowers;
     private String language;
     private String location;
+    private List<Long> followersIds;
 
     public User() {
     }
 
-    public User(Date crawledDate, Long userId, Date createdAt, String name, String screenName, Integer numOfTweets, Integer numOfFollowers, String language, String location) {
+    public User(Date crawledDate, Long userId, Date createdAt, String name, String screenName, Integer numOfTweets, Integer numOfFollowers, String language, String location, List<Long> followersIds) {
         this.crawledDate = crawledDate;
         this.userId = userId;
         this.createdAt = createdAt;
@@ -34,14 +34,7 @@ public class User {
         this.numOfFollowers = numOfFollowers;
         this.language = language;
         this.location = location;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.followersIds = followersIds;
     }
 
     public Date getCrawledDate() {
@@ -116,10 +109,17 @@ public class User {
         this.location = location;
     }
 
+    public List<Long> getFollowersIds() {
+        return followersIds;
+    }
+
+    public void setFollowersIds(List<Long> followersIds) {
+        this.followersIds = followersIds;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "id='" + id + '\'' +
                 ", crawledDate=" + crawledDate +
                 ", userId=" + userId +
                 ", createdAt=" + createdAt +
@@ -129,6 +129,7 @@ public class User {
                 ", numOfFollowers=" + numOfFollowers +
                 ", language='" + language + '\'' +
                 ", location='" + location + '\'' +
+                ", followersIds=" + followersIds +
                 '}';
     }
 }

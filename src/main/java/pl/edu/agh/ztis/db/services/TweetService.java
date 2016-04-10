@@ -8,7 +8,6 @@ import pl.edu.agh.ztis.db.repositories.TweetRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -18,14 +17,11 @@ public class TweetService {
     private TweetRepository tweetRepository;
 
     public void save(Tweet tweet) {
-        if (!findById(tweet.getTweetId()).isPresent()) tweetRepository.save(tweet);
+        tweetRepository.save(tweet);
     }
 
     public void save(List<Tweet> tweets) {
-        List<Tweet> filteredTweets = tweets.stream()
-                .filter(tweet -> !findById(tweet.getTweetId()).isPresent())
-                .collect(Collectors.toList());
-        tweetRepository.save(filteredTweets);
+        tweetRepository.save(tweets);
     }
 
     public Optional<Tweet> findById(Long id) {

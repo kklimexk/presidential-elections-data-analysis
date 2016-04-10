@@ -9,7 +9,6 @@ import pl.edu.agh.ztis.db.repositories.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -19,14 +18,11 @@ public class UserService {
     private UserRepository userRepository;
 
     public void save(User user) {
-        if (!findById(user.getUserId()).isPresent()) userRepository.save(user);
+        userRepository.save(user);
     }
 
     public void save(List<User> users) {
-        List<User> filteredTweets = users.stream()
-                .filter(user -> !findById(user.getUserId()).isPresent())
-                .collect(Collectors.toList());
-        userRepository.save(filteredTweets);
+        userRepository.save(users);
     }
 
     public Optional<User> findById(Long id) {

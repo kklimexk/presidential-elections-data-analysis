@@ -10,6 +10,7 @@ import pl.edu.agh.ztis.db.services.UserService;
 import twitter4j.*;
 import twitter4j.User;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 @Component
@@ -36,7 +37,8 @@ public class TweetStreamFinder {
                         u.getStatusesCount(),
                         u.getFollowersCount(),
                         u.getLang(),
-                        u.getLocation()));
+                        u.getLocation(),
+                        new ArrayList<>()));
 
                 tweetService.save(new Tweet(new Date(),
                         status.getId(),
